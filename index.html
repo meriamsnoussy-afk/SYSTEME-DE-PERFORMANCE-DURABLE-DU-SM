@@ -1,0 +1,167 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Systeme de Performance Durable du SM</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="assets/jszip.min.js"></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand-block">
+        <span class="brand-mark">SM</span>
+        <div>
+          <h1>SYSTEME DE PERFORMANCE DURABLE DU SM</h1>
+          <p>Plateforme collaborative interconnectee</p>
+        </div>
+      </div>
+
+      <section class="profile-panel">
+        <label>Type d'acces</label>
+        <select id="accessMode">
+          <option value="employee">Employe / repondeur</option>
+          <option value="admin">Administrateur</option>
+        </select>
+        <label>Employe / repondeur</label>
+        <input id="employeeName" type="text" placeholder="Nom de l'employe">
+        <label>Fonction</label>
+        <select id="roleSelect"></select>
+        <small>Les questions se filtrent selon la fonction. Les reponses alimentent tous les modules.</small>
+      </section>
+
+      <nav class="nav-list">
+        <button class="nav-item active employee-view" data-view="questionnaire">Questionnaires ISO</button>
+        <button class="nav-item employee-view" data-view="limits">Limites du SM</button>
+        <button class="nav-item employee-view" data-view="myresponses">Mes reponses</button>
+        <button class="nav-item admin-view" data-view="reception">Reception reponses</button>
+        <button class="nav-item admin-view" data-view="dashboard">Tableau de bord</button>
+        <button class="nav-item admin-view" data-view="swot">SWOT intelligent</button>
+        <button class="nav-item admin-view" data-view="actions">Plan d'action</button>
+        <button class="nav-item admin-view" data-view="report">Rapport global</button>
+        <button class="nav-item admin-view" data-view="sources">Sources / MAJ</button>
+      </nav>
+
+      <section class="source-panel">
+        <div class="source-title">Actualisation</div>
+        <p id="sourceSummary">Chargement...</p>
+        <label class="file-button">
+          <input id="excelInput" type="file" accept=".xlsx,.xls">
+          Remplacer Excel
+        </label>
+      </section>
+    </aside>
+
+    <main class="workspace">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Audit, innovation, reponses employes et pilotage</p>
+          <h2 id="viewTitle">Questionnaire employe</h2>
+        </div>
+        <div class="top-actions">
+          <button id="exportResponses" class="ghost-button">Exporter reponses</button>
+          <label class="ghost-button import-inline">
+            Importer reponses
+            <input id="responsesInput" type="file" accept=".json">
+          </label>
+          <button id="printReport" class="primary-button">Imprimer rapport</button>
+        </div>
+      </header>
+
+      <section id="questionnaire" class="view active">
+        <div class="toolbar">
+          <label class="search-box"><input id="questionSearch" type="search" placeholder="Rechercher dans mes questions..."></label>
+          <select id="standardFilter"></select>
+          <select id="questionStatusFilter">
+            <option value="all">Tous les statuts</option>
+            <option value="A evaluer">A evaluer</option>
+            <option value="C">C</option>
+            <option value="NC min">NC min</option>
+            <option value="NC maj">NC maj</option>
+          </select>
+        </div>
+        <div class="submit-panel">
+          <strong>Mode de contribution</strong>
+          <span>Chaque employe repond aux questions de sa fonction. En cliquant sur Enregistrer, la reponse est recue par la page Reception reponses et recalcule tout le systeme.</span>
+        </div>
+        <div id="questionCards" class="question-grid"></div>
+      </section>
+
+      <section id="reception" class="view">
+        <div class="kpi-grid">
+          <article class="kpi"><span>Reponses recues</span><strong id="kpiResponses">0</strong><small>Tous employes</small></article>
+          <article class="kpi"><span>Employes actifs</span><strong id="kpiEmployees">0</strong><small>Ayant repondu</small></article>
+          <article class="kpi"><span>Questions couvertes</span><strong id="kpiCoverage">0%</strong><small>Au moins une reponse</small></article>
+          <article class="kpi"><span>Derniere MAJ</span><strong id="kpiUpdated">-</strong><small>Reception locale</small></article>
+        </div>
+        <div id="responsesTable" class="table-shell"></div>
+      </section>
+
+      <section id="myresponses" class="view">
+        <div class="submit-panel">
+          <strong>Mes reponses envoyees</strong>
+          <span>Cette page montre uniquement les reponses de l'employe connecte sur ce poste.</span>
+        </div>
+        <div id="myResponsesTable" class="table-shell"></div>
+      </section>
+
+      <section id="dashboard" class="view">
+        <div class="kpi-grid">
+          <article class="kpi"><span>Questions</span><strong id="kpiQuestions">0</strong><small>Questionnaire actif</small></article>
+          <article class="kpi"><span>NC detectees</span><strong id="kpiNc">0</strong><small>Selon reponses recues</small></article>
+          <article class="kpi"><span>Actions</span><strong id="kpiActions">0</strong><small>Generees automatiquement</small></article>
+          <article class="kpi"><span>Score durable</span><strong id="kpiScore">0%</strong><small>Conformite + innovation</small></article>
+        </div>
+        <div class="dashboard-grid">
+          <section class="panel wide"><div class="panel-head"><h3>Maturite par referentiel</h3><span>Depuis les dernieres reponses</span></div><div id="standardBars" class="bar-list"></div></section>
+          <section class="panel"><div class="panel-head"><h3>Participation par role</h3><span>Reponses recues</span></div><div id="roleParticipation" class="stack-list"></div></section>
+          <section class="panel"><div class="panel-head"><h3>Priorites</h3><span>NC maj puis NC min</span></div><div id="priorityList" class="priority-list"></div></section>
+        </div>
+      </section>
+
+      <section id="limits" class="view">
+        <div class="legend-panel"><strong>Priorisation modifiable</strong><span>Priorite elevee</span><span>Priorite moyenne</span><span>Priorite faible</span></div>
+        <div id="limitsGrid" class="limit-grid"></div>
+      </section>
+
+      <section id="swot" class="view">
+        <div class="swot-grid">
+          <section class="swot-card strength"><h3>Forces</h3><div id="swotStrengths"></div></section>
+          <section class="swot-card weakness"><h3>Faiblesses</h3><div id="swotWeaknesses"></div></section>
+          <section class="swot-card opportunity"><h3>Opportunites</h3><div id="swotOpportunities"></div></section>
+          <section class="swot-card threat"><h3>Menaces</h3><div id="swotThreats"></div></section>
+        </div>
+      </section>
+
+      <section id="actions" class="view">
+        <div id="actionBoard" class="action-board"></div>
+      </section>
+
+      <section id="report" class="view">
+        <div id="reportContent" class="report-page"></div>
+      </section>
+
+      <section id="sources" class="view">
+        <div class="settings-grid">
+          <section class="panel">
+            <div class="panel-head"><h3>Fichiers et actualisation</h3><span>Remplacement a tout moment</span></div>
+            <dl id="sourceDetails" class="details-list"></dl>
+            <label class="drop-zone compact"><input id="pdfInput" type="file" accept=".pdf" multiple><strong>Remplacer les PDF ISO</strong></label>
+            <div id="standardCards" class="standard-cards"></div>
+          </section>
+          <section class="panel">
+            <div class="panel-head"><h3>Sauvegarde collaborative</h3><span>Pour recevoir les reponses d'autres postes</span></div>
+            <p class="note">Version statique: les reponses sont stockees dans le navigateur. Pour centraliser plusieurs employes sans serveur, chaque employe exporte ses reponses JSON, puis l'administrateur les importe ici. Pour du temps reel multi-utilisateurs, il faudra connecter une base de donnees.</p>
+            <button id="exportBackup" class="primary-button">Exporter sauvegarde complete</button>
+            <label class="ghost-button import-inline">Importer sauvegarde<input id="backupInput" type="file" accept=".json"></label>
+            <a class="ghost-button" href="assets/manuel-utilisateur-systeme-performance-durable-sm.docx" download>Telecharger manuel Word</a>
+          </section>
+        </div>
+      </section>
+    </main>
+  </div>
+  <div id="toast" class="toast"></div>
+  <script src="app.js"></script>
+</body>
+</html>

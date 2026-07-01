@@ -1,0 +1,14 @@
+{
+  "name": "systeme-performance-durable-sm",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Plateforme collaborative reseau pour audit ISO 9001, ISO 56001, limites SM, reponses employes, SWOT et plan d'action.",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {}
+}
