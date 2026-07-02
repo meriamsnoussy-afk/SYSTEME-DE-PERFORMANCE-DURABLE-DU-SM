@@ -3,10 +3,10 @@ const RESPONSES_KEY = "spdsm_responses_v3";
 const LIMITS_KEY = "spdsm_limits_v3";
 const DOCS_KEY = "spdsm_docs_v3";
 
-const statusOptions = ["A evaluer", "C", "NC min", "NC maj"];
+const statusOptions = ["C", "NC min", "NC maj"];
 const priorityOptions = ["A definir", "Priorite elevee", "Priorite moyenne", "Priorite faible"];
 const viewTitles = {
-  questionnaire: "Questionnaire employe",
+  questionnaire: "Questionnaire employé",
   reception: "Reception reponses",
   dashboard: "Tableau de bord",
   limits: "Limites du SM",
